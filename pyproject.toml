@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-maze-solver"
+version = "1.0.0"
+description = "AI-powered maze solver using A* pathfinding algorithm"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "Flask==3.1.2",
+    "flask-cors==5.0.0",
+    "numpy==2.2.6",
+    "requests==2.32.5"
+]
+
+[project.scripts]
+app = "app:app"
+
+[tool.setuptools]
+packages = ["backend"]

@@ -47,8 +47,8 @@ AI Maze Solver/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd "AI Maze Solver"
+   git clone https://github.com/Kush05Bhardwaj/AI-Maze-Solver.git
+   cd AI-Maze-Solver
    ```
 
 2. **Install Python dependencies**
@@ -58,7 +58,7 @@ AI Maze Solver/
    
    Or install manually:
    ```bash
-   pip install flask flask-cors numpy requests
+   pip install flask flask-cors numpy requests gunicorn
    ```
 
 ## 🎮 Usage
@@ -230,6 +230,39 @@ Created as a capstone project demonstrating AI pathfinding algorithms.
 - [A* Algorithm Wikipedia](https://en.wikipedia.org/wiki/A*_search_algorithm)
 - [Pathfinding Visualization](https://qiao.github.io/PathFinding.js/visual/)
 - [Introduction to A*](https://www.redblobgames.com/pathfinding/a-star/introduction.html)
+
+## 🚀 Deployment
+
+### Deploy to Vercel
+
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run: `vercel`
+3. Follow the prompts
+
+Or click: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Kush05Bhardwaj/AI-Maze-Solver)
+
+### Deploy to Render
+
+1. Create a new Web Service on [Render](https://render.com)
+2. Connect your GitHub repository
+3. Use these settings:
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+
+### Deploy to Heroku
+
+```bash
+heroku create your-maze-solver
+git push heroku master
+```
+
+The `Procfile` and `requirements.txt` are already configured!
+
+### Local Production Mode
+
+```bash
+gunicorn app:app --bind 0.0.0.0:5000
+```
 
 ---
 
