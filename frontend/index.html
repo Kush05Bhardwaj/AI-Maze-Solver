@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Maze Solver</title>
+  <style>
+    body { background:#111; color:#fff; font-family: sans-serif; text-align:center; }
+    .controls { margin: 20px auto; }
+    .grid { display:inline-grid; gap:2px; margin-top:20px; }
+    .cell { width:20px; height:20px; background:#333; }
+    .wall { background:#555; }
+    .path { background:#0f0; }
+    .start { background:#00f; }
+    .end { background:#f00; }
+  </style>
+</head>
+<body>
+  <h1>AI Maze Solver (A*)</h1>
+
+  <div class="controls">
+    <label>Rows: <input id="rows" type="number" value="20" min="5" max="40"></label>
+    <label>Cols: <input id="cols" type="number" value="20" min="5" max="40"></label>
+    <label>Walls: <input id="walls" type="number" value="60" min="0" max="400"></label>
+    <button id="solveBtn">Generate & Solve</button>
+  </div>
+
+  <div id="status"></div>
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const solveBtn = document.getElementById("solveBtn");
+    const gridDiv = document.getElementById("grid");
+    const statusDiv = document.getElementById("status");
+
+    solveBtn.onclick = async () => {
+      const rows = parseInt(document.getElementById("rows").value);
+      const cols = parseInt(document.getElementById("cols").value);
+      const wall_count = parseInt(document.getElementById("walls").value);
+
+      statusDiv.textContent = "Solving...";
+      gridDiv.innerHTML = "";
+
+      const res = await fetch("http://127.0.0.1:5000/solve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows, cols, wall_count })
+      });
+
+      const data = await res.json();
+      statusDiv.textContent = data.found ? "Path found ✅" : "No path ❌";
+
+      const { maze, path, start, end } = data;
+
+      gridDiv.style.gridTemplateColumns = `repeat(${cols}, 20px)`;
+
+      const pathSet = new Set(path.map(p => p.toString()));
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          if (maze[r][c] === 1) cell.classList.add("wall");
+          if (pathSet.has([r, c].toString())) cell.classList.add("path");
+          if (r === start[0] && c === start[1]) cell.classList.add("start");
+          if (r === end[0] && c === end[1]) cell.classList.add("end");
+
+          gridDiv.appendChild(cell);
+        }
+      }
+    };
+  </script>
+</body>
+</html>
