@@ -3,7 +3,7 @@ from flask_cors import CORS
 from maze_solver import solve_random_maze
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Health check
 @app.route("/ping")
