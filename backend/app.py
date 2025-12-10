@@ -1,10 +1,10 @@
-# backend/app.py
-from flask import Flask, request, jsonify. , jsonify, make_response
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from maze_solver import solve_random_maze
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)  # Allow all origins
+
 
 @app.route("/ping")
 def ping():
@@ -13,26 +13,32 @@ def ping():
 
 @app.route("/solve", methods=["POST"])
 def solve():
-    data = request.get_json(force=True)
+    try:
+        data = request.get_json(force=True)
 
-    rows = int(data.get("rows", 20))
-    cols = int(data.get("cols", 20))
-    wall_count = int(data.get("wall_count", 120))
-    seed = int(data.get("seed", 42))
+        rows = int(data.get("rows", 20))
+        cols = int(data.get("cols", 20))
 
-    maze, start, end, path = solve_random_maze(
-        rows=rows, cols=cols, wall_count=wall_count, seed=seed
-    )
+        # DFS generator no longer uses wall_count or seed
+        maze, start, end, path = solve_random_maze(
+            rows=rows,
+            cols=cols,
+            seed=None  # Always random
+        )
 
-    return jsonify({
-        "rows": rows,
-        "cols": cols,
-        "maze": maze.tolist(),
-        "start": list(start),
-        "end": list(end),
-        "path": path if path else [],
-        "found": bool(path)
-    })
+        return jsonify({
+            "rows": rows,
+            "cols": cols,
+            "maze": maze.tolist(),
+            "start": list(start),
+            "end": list(end),
+            "path": [list(p) for p in path] if path else [],
+            "found": path is not None
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.after_request
 def add_no_cache_headers(response):
@@ -40,6 +46,7 @@ def add_no_cache_headers(response):
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
 
 if __name__ == "__main__":
     app.run(debug=True)
