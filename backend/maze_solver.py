@@ -111,8 +111,8 @@ def a_star(maze, start, end):
 # -----------------------------------------------------------
 #  Wrapper
 # -----------------------------------------------------------
-
-def solve_random_maze(rows=20, cols=20, wall_count=None, seed=None):
-    maze, start, end = generate_maze(rows, cols, wall_count, seed)
+def solve_random_maze(rows=20, cols=20, seed=None):
+    maze, start, end = generate_maze(rows, cols, seed=seed)
     path = a_star(maze, start, end)
     return maze, start, end, path
+
