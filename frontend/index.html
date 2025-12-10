@@ -145,11 +145,12 @@
       gridDiv.innerHTML = "";
 
       try {
-        const res = await fetch(`${API_BASE}/solve`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ rows, cols, walls })
-        });
+        const res = await fetch(`${API_BASE}/solve?x=${Date.now()}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rows, cols, walls })
+      });
+
 
         const data = await res.json();
 
