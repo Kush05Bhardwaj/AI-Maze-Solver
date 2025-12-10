@@ -3,8 +3,9 @@ import numpy as np
 import heapq
 
 # ---------- Maze generation ----------
-def generate_maze(rows=20, cols=20, wall_count=120, seed=42):
-    np.random.seed(seed)
+def generate_maze(rows=20, cols=20, wall_count=120, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
     maze = np.zeros((rows, cols), dtype=int)
 
     # Add random walls
