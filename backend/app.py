@@ -3,14 +3,15 @@ from flask_cors import CORS
 from maze_solver import solve_random_maze
 
 app = Flask(__name__)
-CORS(app)  # Allow all origins
+CORS(app)
 
-
+# Health check
 @app.route("/ping")
 def ping():
     return "pong", 200
 
 
+# Solve Maze (DFS-based)
 @app.route("/solve", methods=["POST"])
 def solve():
     try:
@@ -19,16 +20,14 @@ def solve():
         rows = int(data.get("rows", 20))
         cols = int(data.get("cols", 20))
 
-        # DFS generator no longer uses wall_count or seed
+        # DFS generator DOES NOT USE wall_count or seed
         maze, start, end, path = solve_random_maze(
             rows=rows,
             cols=cols,
-            seed=None  # Always random
+            seed=None
         )
 
         return jsonify({
-            "rows": rows,
-            "cols": cols,
             "maze": maze.tolist(),
             "start": list(start),
             "end": list(end),
@@ -40,6 +39,7 @@ def solve():
         return jsonify({"error": str(e)}), 500
 
 
+# Disable caching (important for Vercel)
 @app.after_request
 def add_no_cache_headers(response):
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
@@ -49,4 +49,4 @@ def add_no_cache_headers(response):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
