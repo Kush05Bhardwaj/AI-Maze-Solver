@@ -1,5 +1,5 @@
 # backend/app.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify. , jsonify, make_response
 from flask_cors import CORS
 from maze_solver import solve_random_maze
 
@@ -34,6 +34,12 @@ def solve():
         "found": bool(path)
     })
 
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)
