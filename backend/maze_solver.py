@@ -12,23 +12,19 @@ def generate_maze(rows=20, cols=20, wall_count=None, seed=None):
         random.seed(seed)
         np.random.seed(seed)
 
-    # Make grid full of walls
+    # Start with all walls
     maze = np.ones((rows, cols), dtype=int)
 
-    # Choose random start and end points
-    start = (0, 0)
-    end = (rows - 1, cols - 1)
+    # Helper to check bounds
+    def in_bounds(r, c):
+        return 0 <= r < rows and 0 <= c < cols
 
-    # Directions for DFS
-    directions = [(-2, 0), (2, 0), (0, -2), (0, 2)]
-
-    # Ensure odd-size maze for perfect generation
-    if rows % 2 == 0: rows -= 1
-    if cols % 2 == 0: cols -= 1
-
-    # DFS Stack
+    # DFS stack
     stack = [(0, 0)]
-    maze[0][0] = 0  # path
+    maze[0][0] = 0
+
+    # Move directions for DFS (2 steps)
+    directions = [(-2, 0), (2, 0), (0, -2), (0, 2)]
 
     while stack:
         r, c = stack[-1]
@@ -36,7 +32,7 @@ def generate_maze(rows=20, cols=20, wall_count=None, seed=None):
         neighbors = []
         for dr, dc in directions:
             nr, nc = r + dr, c + dc
-            if 0 <= nr < rows and 0 <= nc < cols and maze[nr][nc] == 1:
+            if in_bounds(nr, nc) and maze[nr][nc] == 1:
                 neighbors.append((nr, nc))
 
         if not neighbors:
@@ -46,21 +42,24 @@ def generate_maze(rows=20, cols=20, wall_count=None, seed=None):
         nr, nc = random.choice(neighbors)
 
         # Knock down the wall between
-        wall_r, wall_c = r + (nr - r) // 2, c + (nc - c) // 2
-        maze[wall_r][wall_c] = 0
-        maze[nr][nc] = 0
+        wall_r = r + (nr - r) // 2
+        wall_c = c + (nc - c) // 2
+
+        if in_bounds(wall_r, wall_c):
+            maze[wall_r][wall_c] = 0
+        if in_bounds(nr, nc):
+            maze[nr][nc] = 0
 
         stack.append((nr, nc))
 
-    # Convert smaller odd grid into full grid if needed
-    full_maze = np.ones((rows, cols), dtype=int)
-    full_maze[:rows, :cols] = maze
+    start = (0, 0)
+    end = (rows - 1, cols - 1)
 
-    # Ensure start/end are open
-    full_maze[start] = 0
-    full_maze[end] = 0
+    maze[start] = 0
+    maze[end] = 0
 
-    return full_maze, start, end
+    return maze, start, end
+
 
 
 # -----------------------------------------------------------
