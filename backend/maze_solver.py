@@ -1,18 +1,22 @@
-# backend/maze_solver.py
 import numpy as np
 import heapq
 
 # ---------- Maze generation ----------
 def generate_maze(rows=20, cols=20, wall_count=120, seed=None):
+    # Only use seed if explicitly provided
     if seed is not None:
         np.random.seed(seed)
+
     maze = np.zeros((rows, cols), dtype=int)
 
     # Add random walls
-    for _ in range(wall_count):
+    placed = 0
+    while placed < wall_count:
         r = np.random.randint(0, rows)
         c = np.random.randint(0, cols)
-        maze[r][c] = 1  # wall
+        if (r, c) not in [(0, 0), (rows - 1, cols - 1)]:
+            maze[r][c] = 1
+            placed += 1
 
     start, end = (0, 0), (rows - 1, cols - 1)
     maze[start] = 0
@@ -65,8 +69,8 @@ def a_star(maze, start, end):
     return None
 
 
-# ---------- Helper to solve ----------
-def solve_random_maze(rows=20, cols=20, wall_count=120, seed=42):
+# ---------- Helper ----------
+def solve_random_maze(rows=20, cols=20, wall_count=120, seed=None):
     maze, start, end = generate_maze(rows, cols, wall_count, seed)
     path = a_star(maze, start, end)
     return maze, start, end, path
